@@ -20,12 +20,22 @@ export default function LoanForm() {
     e.preventDefault();
     setError("");
     setResult(null);
-    try {
-      const res = await createLoan(form);
-      setResult(res);
-    } catch (err) {
-      setError(err.message || "Error creating loan");
+    const url="/api/v1/loans"
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json" // ✅ ADD THIS
+      },
+      body: JSON.stringify(form)
+    });
+    
+    if(response.ok){
+      const data=await response.json()
+      setResult(data)
+    }else{
+      setError("Error creating loan")
     }
+    setForm({ customer_id: "", loan_amount: "", loan_period_years: "", interest_rate_yearly: "" });
   };
 
   return (

@@ -18,16 +18,26 @@ export default function PaymentForm() {
   const handleSubmit = async e => {
     e.preventDefault();
     setError("");
-    setResult(null);
-    try {
-      const res = await makePayment(form.loan_id, {
+    const url = `http://localhost:3000/api/v1/loans/${form.loan_id}/payments`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json" // ✅ ADD THIS
+      },
+      body: JSON.stringify({
         amount: form.amount,
         payment_type: form.payment_type
-      });
-      setResult(res);
-    } catch (err) {
-      setError(err.message || "Error making payment");
+      })
+    });
+    
+    if(response.ok){
+      const data=await response.json()
+      setResult(data)
+    }else{
+      
+      setError(response.status)
     }
+    setForm({ loan_id: "", amount: "", payment_type: "EMI" });
   };
 
   return (
