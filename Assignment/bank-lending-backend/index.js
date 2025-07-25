@@ -104,6 +104,32 @@ app.post('/api/v1/loans/:loan_id/payments', async (req, res) => {
     }
     
   });
+
+  app.get('/api/v1/loans/:loan_id/ledger', async (req, res) => {
+    const loan_id=req.params.loan_id
+    const resp2=await pool.query('SELECT * FROM "Payments" WHERE loan_id=$1',[loan_id])
+    const resp1=await pool.query('SELECT * FROM "Loans" WHERE loan_id=$1',[loan_id])
+    const loan=resp1.rows[0]
+    const payments=resp2.rows
+    console.log(payments)
+    console.log(loan)
+    const total_amount_paid=payments.reduce((acc,payment)=>acc+parseFloat(payment.amount),0)
+    const data={
+        loan_id:loan.loan_id,
+        customer_id:loan.customer_id,
+        principal_amount:loan.principal_amount,
+        total_amount:loan.total_amount,
+        monthly_emi:loan.monthly_emi,
+        amount_paid:total_amount_paid,
+        balance_amount:loan.total_amount==="0"?0:loan.total_amount-total_amount_paid,
+        emis_left:loan.total_amount==="0"?0:Math.ceil((loan.total_amount-total_amount_paid)/loan.monthly_emi),
+        transactions:payments
+    }
+    if(resp1.rows.length===0){
+      return res.status(404).send({error:"Invalid loan id"})
+    }
+    res.send(data)
+  });
   
   
 // Start server

@@ -10,12 +10,13 @@ export default function LedgerView({ initialLoanId = "" }) {
   const handleSubmit = async e => {
     e.preventDefault();
     setError("");
-    setLedger(null);
-    try {
-      const res = await getLedger(loanId);
-      setLedger(res);
-    } catch (err) {
-      setError(err.message || "Error fetching ledger");
+    const url=`/api/v1/loans/${loanId}/ledger`
+    const response=await fetch(url,{method:"GET"})
+    if(response.ok){
+      const data=await response.json()
+      setLedger(data)
+    }else{
+      setError(response.status)
     }
   };
 
@@ -39,7 +40,7 @@ export default function LedgerView({ initialLoanId = "" }) {
         <div>
           <h3>Ledger for Loan {ledger.loan_id}</h3>
           <p>Customer ID: {ledger.customer_id}</p>
-          <p>Principal: {ledger.principal}</p>
+          <p>Principal: {ledger.principal_amount}</p>
           <p>Total Amount: {ledger.total_amount}</p>
           <p>Monthly EMI: {ledger.monthly_emi}</p>
           <p>Amount Paid: {ledger.amount_paid}</p>
@@ -57,11 +58,11 @@ export default function LedgerView({ initialLoanId = "" }) {
             </thead>
             <tbody>
               {ledger.transactions.map(txn => (
-                <tr key={txn.transaction_id}>
-                  <td>{txn.transaction_id}</td>
-                  <td>{txn.date}</td>
+                <tr key={txn.payment_id}>
+                  <td>{txn.payment_id}</td>
+                  <td>{txn.payment_date}</td>
                   <td>{txn.amount}</td>
-                  <td>{txn.type}</td>
+                  <td>{txn.payment_type}</td>
                 </tr>
               ))}
             </tbody>
