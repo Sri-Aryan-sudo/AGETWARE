@@ -3,15 +3,33 @@ import React, { useState, useEffect } from "react";
 
 const carouselItems = [
   {
-    img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+    icon: (
+      <svg width="80" height="80" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="6" y="18" width="36" height="18" rx="4" fill="#ffd700" stroke="#2d3e50" strokeWidth="2"/>
+        <rect x="14" y="10" width="20" height="8" rx="3" fill="#fff" stroke="#2d3e50" strokeWidth="2"/>
+        <circle cx="24" cy="27" r="4" fill="#2d3e50" />
+      </svg>
+    ),
     caption: "Empowering Your Financial Future"
   },
   {
-    img: "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=800&q=80",
+    icon: (
+      <svg width="80" height="80" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="6" y="14" width="36" height="20" rx="4" fill="#ffd700" stroke="#2d3e50" strokeWidth="2"/>
+        <rect x="10" y="22" width="8" height="4" rx="1" fill="#fff" />
+        <rect x="30" y="22" width="8" height="4" rx="1" fill="#fff" />
+        <rect x="14" y="18" width="20" height="2" rx="1" fill="#2d3e50" />
+      </svg>
+    ),
     caption: "Simple, Transparent Lending Solutions"
   },
   {
-    img: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80",
+    icon: (
+      <svg width="80" height="80" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="18" r="8" fill="#ffd700" stroke="#2d3e50" strokeWidth="2"/>
+        <rect x="10" y="30" width="28" height="10" rx="5" fill="#fff" stroke="#2d3e50" strokeWidth="2"/>
+      </svg>
+    ),
     caption: "Your Dreams, Our Support"
   }
 ];
@@ -34,14 +52,12 @@ export default function Home() {
         Whether you're looking to fund your dreams, grow your business, or manage your finances, our innovative lending solutions and customer-first approach are here to help you succeed.<br/>
         Experience banking that's modern, transparent, and built for you.
       </p>
-      <div className="carousel">
-        <img
-          src={carouselItems[current].img}
-          alt={carouselItems[current].caption}
-          className="carousel-img"
-        />
-        <div className="carousel-caption">
-          {carouselItems[current].caption}
+      <div className="carousel" style={{ background: 'none', boxShadow: 'none' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: 220, justifyContent: 'center' }}>
+          {carouselItems[current].icon}
+          <div className="carousel-caption" style={{ background: 'none', color: '#2d3e50', fontWeight: 700, fontSize: '1.15em', marginTop: 16, position: 'static', padding: 0 }}>
+            {carouselItems[current].caption}
+          </div>
         </div>
         <div className="carousel-dots">
           {carouselItems.map((_, idx) => (
