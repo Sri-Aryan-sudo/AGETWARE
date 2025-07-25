@@ -11,11 +11,13 @@ export default function AccountOverview() {
     e.preventDefault();
     setError("");
     setOverview(null);
-    try {
-      const res = await getAccountOverview(customerId);
-      setOverview(res);
-    } catch (err) {
-      setError(err.message || "Error fetching overview");
+    const url=`/api/v1/customers/${customerId}/overview`
+    const response=await fetch(url,{method:"GET"})
+    if(response.ok){
+      const data=await response.json()
+      setOverview(data)
+    }else{
+      setError(response.status)
     }
   };
 
@@ -53,7 +55,7 @@ export default function AccountOverview() {
               {overview.loans.map(loan => (
                 <tr key={loan.loan_id}>
                   <td>{loan.loan_id}</td>
-                  <td>{loan.principal}</td>
+                  <td>{loan.principal_amount}</td>
                   <td>{loan.total_amount}</td>
                   <td>{loan.total_interest}</td>
                   <td>{loan.emi_amount}</td>

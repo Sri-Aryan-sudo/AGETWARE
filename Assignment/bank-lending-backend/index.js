@@ -130,6 +130,43 @@ app.post('/api/v1/loans/:loan_id/payments', async (req, res) => {
     }
     res.send(data)
   });
+  app.get('/api/v1/customers/:customer_id/overview', async (req, res) => {
+    const { customer_id } = req.params;
+  
+    const customerResult = await pool.query('SELECT * FROM Customers WHERE customer_id = $1', [customer_id]);
+    if (customerResult.rows.length === 0) {
+      return res.status(404).send({ error: "Customer not found" });
+    }
+  
+    const customer = customerResult.rows[0];
+  
+    const loansResult = await pool.query('SELECT * FROM "Loans" WHERE customer_id = $1', [customer_id]);
+    const loans = loansResult.rows;
+  
+    const formattedLoans = loans.map(loan => {
+      const amount_paid = parseFloat(loan.principal_amount) - parseFloat(loan.total_amount);
+      const emis_left = parseFloat(loan.monthly_emi) > 0 ? Math.ceil(parseFloat(loan.total_amount) / parseFloat(loan.monthly_emi)) : 0;
+      const original_total_interest = +(parseFloat(loan.principal_amount) * 3 * (parseFloat(loan.interest_rate) / 100)).toFixed(2);
+      return {
+        loan_id: loan.loan_id,
+        principal_amount: loan.principal_amount,
+        total_amount: loan.total_amount,
+        total_interest: original_total_interest,
+        emi_amount: loan.monthly_emi,
+        amount_paid: amount_paid < 0 ? 0 : +amount_paid.toFixed(2),
+        emis_left
+      };
+    });
+  
+    const data = {
+      customer_id: customer.customer_id,
+      total_loans: loans.length,
+      loans: formattedLoans
+    };
+  
+    return res.send(data);
+  });
+  
   
   
 // Start server
